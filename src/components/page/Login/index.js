@@ -51,14 +51,13 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = () => {
-    console.log(data);
     axios
-      .post(`http://192.168.1.3:5000/api/v1/auth/login`, data)
+      .post(`http://192.168.1.6:5000/api/v1/auth/login`, data)
       .then(async (res) => {
         await storeData(res.data.Data);
         if (res.data.Data.active == "no") {
           axios
-            .post(`http://192.168.1.3:5000/api/v1/auth/sendotp`, {
+            .post(`http://192.168.1.6:5000/api/v1/auth/sendotp`, {
               phone_number: res.data.Data.phone_number,
             })
             .then((result) => {

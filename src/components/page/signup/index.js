@@ -20,7 +20,7 @@ const Signup = ({ navigation }) => {
 
   const handleRegister = () => {
     axios
-      .post(`http://192.168.1.3:5000/api/v1/auth/register`, data)
+      .post(`http://192.168.1.6:5000/api/v1/auth/register`, data)
       .then((res) => {
         navigation.navigate("confirm-otp", {
           otp: res.data.Otp,

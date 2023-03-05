@@ -50,7 +50,7 @@ export default ConfirmPin = () => {
 
   useEffect(() => {
     axios
-      .post(`http://192.168.1.3:5000/api/v1/user/confirm-pin/${id}`, {
+      .post(`http://192.168.1.6:5000/api/v1/user/confirm-pin/${id}`, {
         pin: "123",
       })
       .then((res) => console.log(res.data.Data))
@@ -91,13 +91,13 @@ export default ConfirmPin = () => {
 
   const handleConfirmPin = () => {
     axios
-      .post(`http://192.168.1.3:5000/api/v1/user/confirm-pin/${id}`, {
+      .post(`http://192.168.1.6:5000/api/v1/user/confirm-pin/${id}`, {
         pin: pin,
       })
       .then(async (res) => {
         setModal(true);
         await storeData({ ...data, active_pin: true });
-        navigation.navigate("home", { load: true });
+        navigation.navigate("home", { load: true, id: id });
       })
       .catch((err) => setError(err.response.data.Error));
   };

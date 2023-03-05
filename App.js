@@ -10,6 +10,8 @@ import Confirmation from "./src/components/page/Confirmation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ConfirmOTP from "./src/components/page/Confirm OTP";
 import ConfirmPin from "./src/components/page/Confirm Pin";
+import Topup from "./src/components/page/Topup";
+import AmountTopup from "./src/components/page/Amount Topup";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -20,6 +22,16 @@ export default function App() {
         <Stack.Screen
           name="home"
           component={Home}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="topup"
+          component={Topup}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="amount-topup"
+          component={AmountTopup}
           options={{ headerShown: false }}
         />
         <Stack.Screen

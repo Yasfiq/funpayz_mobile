@@ -16,7 +16,6 @@ import Header from "../../molecules/Header";
 export default Confirmation = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  console.log(route.params.data);
   const [modal, setModal] = useState(false);
 
   const showConfirmPin = () => {

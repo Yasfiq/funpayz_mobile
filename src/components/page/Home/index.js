@@ -7,28 +7,58 @@ import TransactionHistory from "../../molecules/Transaction History";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
+import axios from "axios";
 
 const Home = ({ navigation }) => {
   const route = useRoute();
+  const [isLogin, setIsLogin] = useState();
   const [data, setData] = useState();
   const getData = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem("@login");
-      setData(JSON.parse(jsonValue));
+      setIsLogin(JSON.parse(jsonValue));
     } catch (e) {
       console.log(e);
     }
   };
+  const [load, setLoad] = useState();
+
+  // useEffect(() => {
+  //   if (load) {
+  //     setTimeout(() => {
+  //       setLoad(false);
+  //     }, 2000);
+  //   }
+  // }, [load]);
+
+  // useEffect(() => {
+  //   if (!load) {
+  //     setTimeout(() => {
+  //       setLoad(true);
+  //       console.log("load home");
+  //     }, 2000);
+  //   }
+  // }, [load]);
 
   useEffect(() => {
     getData();
-  }, [route]);
+  }, []);
 
   useEffect(() => {
-    if (!data) {
+    if (!isLogin) {
       navigation.navigate("login");
     }
-  }, [data]);
+  }, [isLogin]);
+
+  useEffect(() => {
+    if (route.params) {
+      axios
+        .get(`https://funpayz.herokuapp.com/api/v1/user/${route.params.id}`)
+        .then((res) => {
+          setData(res.data.Data);
+        });
+    }
+  }, [route, load]);
 
   return (
     <ScrollView style={[globalCss.container, { paddingTop: 30 }]}>
@@ -56,7 +86,15 @@ const Home = ({ navigation }) => {
             }}
           >
             <Image
-              source={require("../../../assets/images/contoh.jpeg")}
+              source={
+                data
+                  ? {
+                      uri: `https://res.cloudinary.com/dcf12mtca/image/upload/v1677939306/${data.image}.webp`,
+                    }
+                  : {
+                      uri: "https://res.cloudinary.com/dcf12mtca/image/upload/v1677939306/default.webp",
+                    }
+              }
               style={[
                 {
                   width: "100%",
@@ -69,13 +107,16 @@ const Home = ({ navigation }) => {
           <View>
             <Text style={[{ fontSize: 18 }]}>Hello,</Text>
             <Text style={[{ fontSize: 24, fontWeight: "bold" }]}>
-              {data.username ? data.username : ""}
+              {data ? data.username : ""}
             </Text>
           </View>
         </View>
         <Ionicons name="notifications-outline" size={30} color="black" />
       </View>
-      <Balance />
+      <Balance
+        balance={data && data.balance}
+        phone={data && data.phone_number}
+      />
       <View
         style={[
           {
@@ -93,7 +134,15 @@ const Home = ({ navigation }) => {
           </Text>
         </Pressable>
         <Pressable style={[{ width: "45%" }]}>
-          <Text style={[globalCss.btnSecondary, { fontSize: 18 }]}>
+          <Text
+            style={[globalCss.btnSecondary, { fontSize: 18 }]}
+            onPress={() =>
+              navigation.navigate("topup", {
+                id: data.id,
+                balance: data.balance,
+              })
+            }
+          >
             <AntDesign name="plus" size={20} color="#537FE7" /> Top Up
           </Text>
         </Pressable>
