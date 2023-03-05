@@ -69,7 +69,7 @@ const Home = ({ navigation }) => {
           <View>
             <Text style={[{ fontSize: 18 }]}>Hello,</Text>
             <Text style={[{ fontSize: 24, fontWeight: "bold" }]}>
-              {data ? (data.email ? data.email : "") : ""}
+              {data.username ? data.username : ""}
             </Text>
           </View>
         </View>

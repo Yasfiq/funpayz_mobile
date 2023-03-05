@@ -7,6 +7,7 @@ import SplashScreen from "../../atoms/SplashScreen";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const Login = ({ navigation }) => {
   const [loading, setLoading] = useState();
@@ -15,11 +16,29 @@ const Login = ({ navigation }) => {
     password: "",
   });
   const [show, setShow] = useState();
-  const [isLogin, setIsLogin] = useState();
+  const [error, setError] = useState();
+  const [datal, setDatal] = useState();
 
   setTimeout(() => {
     setLoading(true);
   }, 2000);
+
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("@login");
+      setDatal(JSON.parse(jsonValue));
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  useEffect(() => {
+    if (datal) navigation.navigate("confirm-pin");
+  }, [datal]);
 
   const storeData = async (value) => {
     try {
@@ -31,9 +50,29 @@ const Login = ({ navigation }) => {
     }
   };
 
-  const handleLogin = async () => {
-    await storeData(data);
-    navigation.navigate("home", { load: true });
+  const handleLogin = () => {
+    console.log(data);
+    axios
+      .post(`http://192.168.1.3:5000/api/v1/auth/login`, data)
+      .then(async (res) => {
+        await storeData(res.data.Data);
+        if (res.data.Data.active == "no") {
+          axios
+            .post(`http://192.168.1.3:5000/api/v1/auth/sendotp`, {
+              phone_number: res.data.Data.phone_number,
+            })
+            .then((result) => {
+              navigation.navigate("confirm-otp", {
+                otp: result.data.otp,
+                email: data.email,
+                isLogin: true,
+              });
+            })
+            .catch((error) => setError(error.response.data.Error));
+        }
+        navigation.navigate("confirm-pin");
+      })
+      .catch((err) => setError(err.response.data.Error));
   };
 
   if (!loading) {
@@ -100,7 +139,10 @@ const Login = ({ navigation }) => {
                   color={data.email.length > 0 ? "#537FE7" : "#d0d0d0"}
                 />
               }
-              onChange={(text) => setData({ ...data, email: text })}
+              onChange={(text) => {
+                setError("");
+                setData({ ...data, email: text });
+              }}
               value={data.email}
               type="email-address"
             />
@@ -128,7 +170,10 @@ const Login = ({ navigation }) => {
                     color={data.password.length > 0 ? "#537FE7" : "#d0d0d0"}
                   />
                 }
-                onChange={(text) => setData({ ...data, password: text })}
+                onChange={(text) => {
+                  setError("");
+                  setData({ ...data, password: text });
+                }}
                 value={data.password}
                 secure={show ? false : true}
               />
@@ -140,12 +185,15 @@ const Login = ({ navigation }) => {
                 onPress={() => (show ? setShow(false) : setShow(true))}
               />
             </View>
+            {error && (
+              <Text style={[{ marginTop: 10, color: "red" }]}>{error}</Text>
+            )}
             <Text
               style={[
                 {
                   textAlign: "right",
                   width: "100%",
-                  marginTop: 40,
+                  marginTop: 30,
                   color: "#92979f",
                   fontSize: 16,
                   paddingHorizontal: 10,
