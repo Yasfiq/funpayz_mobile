@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TextInput, View } from "react-native";
 import globalCss from "../../../assets/styles/globalCss";
 import Header from "../../molecules/Header";
@@ -9,12 +9,10 @@ import toRupiah from "../../../utils/Function/toCurrency";
 export default AmountInput = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { name } = route.params;
+  const { name, user_id, dataUser, balance } = route.params;
   const [data, setData] = useState({
     note: "",
   });
-
-  // console.log(parseInt(data.amount.replace(/["Rp.",\s]/g, "")));
 
   return (
     <View>
@@ -49,7 +47,9 @@ export default AmountInput = () => {
             }}
           >
             <Image
-              source={require("../../../assets/images/contoh.jpeg")}
+              source={{
+                uri: `https://res.cloudinary.com/dcf12mtca/image/upload/v1677939306/${dataUser.image}.webp`,
+              }}
               style={[
                 {
                   width: "100%",
@@ -63,7 +63,7 @@ export default AmountInput = () => {
             <Text style={[{ fontSize: 18, fontWeight: "bold", color: "#fff" }]}>
               {name}
             </Text>
-            <Text style={[{ color: "#fff" }]}>+62 858 9118 5933</Text>
+            <Text style={[{ color: "#fff" }]}>{dataUser.phone_number}</Text>
           </View>
         </View>
       </View>
@@ -94,7 +94,7 @@ export default AmountInput = () => {
         <Text
           style={[{ marginVertical: 10, textAlign: "center", fontSize: 18 }]}
         >
-          {toRupiah(120000, "rupiah")} Available
+          {toRupiah(balance, "rupiah")} Available
         </Text>
         <InputLine
           parentClass={{ marginTop: 20, marginBottom: 50 }}
@@ -108,10 +108,17 @@ export default AmountInput = () => {
         {data.amount &&
         parseInt(data.amount.replace(/["Rp.",\s]/g, "")) !== 0 &&
         data.amount.replace(/["Rp.",\s]/g, "").length !== 0 &&
-        parseInt(data.amount.replace(/["Rp.",\s]/g, "")) <= 120000 ? (
+        parseInt(data.amount.replace(/["Rp.",\s]/g, "")) <= balance ? (
           <Text
             style={[globalCss.btnPrimary, { fontSize: 20 }]}
-            onPress={() => navigation.navigate("confirmation", { data })}
+            onPress={() =>
+              navigation.navigate("confirmation", {
+                data,
+                dataUser,
+                user_id,
+                balance,
+              })
+            }
           >
             Continue
           </Text>

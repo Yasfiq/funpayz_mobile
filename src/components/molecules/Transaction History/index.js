@@ -1,6 +1,9 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { FlatList, Image, ScrollView, Text, View } from "react-native";
 
-const TransactionHistory = () => {
+const TransactionHistory = ({ id }) => {
+  const [data, setData] = useState();
   function formatRupiah(angka, prefix) {
     let number_string = angka.toString().replace(/[^,\d]/g, ""),
       split = number_string.split(","),
@@ -18,12 +21,21 @@ const TransactionHistory = () => {
     return prefix == undefined ? rupiah : rupiah ? "Rp. " + rupiah : "";
   }
 
+  useEffect(() => {
+    axios
+      .get(`https://funpayz.herokuapp.com/api/v1/transaction/${id}`)
+      .then((res) => {
+        setData(res.data.Data);
+      })
+      .catch((err) => console.log(err.response.data.Error));
+  }, [id]);
+
   return (
     <View style={[{ marginTop: 20 }]}>
-      {[1, 2, 3, 4, 5, 6].map((item) => {
+      {data?.map((item) => {
         return (
           <View
-            key={item}
+            key={item.id}
             style={[
               {
                 marginBottom: 10,
@@ -64,13 +76,13 @@ const TransactionHistory = () => {
               </View>
               <View>
                 <Text style={[{ fontSize: 18, fontWeight: "bold" }]}>
-                  Jhonson Gridle
+                  {item.subject_name}
                 </Text>
-                <Text>Transfer</Text>
+                <Text>{item.type == "expense" ? "Transfer" : "Accept"}</Text>
               </View>
             </View>
             <Text style={[{ fontSize: 16, color: "teal" }]}>
-              + {formatRupiah(50000)}
+              + {formatRupiah(item.nonimal, "rupiah")}
             </Text>
           </View>
         );

@@ -1,9 +1,14 @@
+import { useRoute } from "@react-navigation/native";
+import { useState } from "react";
 import { ScrollView, Text, TextInput, View } from "react-native";
 import globalCss from "../../../assets/styles/globalCss";
 import ContactList from "../../molecules/Contact List";
 import Header from "../../molecules/Header";
 
 const FindReceiver = ({ navigation }) => {
+  const [search, setSearch] = useState("");
+  const route = useRoute();
+
   return (
     <ScrollView>
       <Header navigation={navigation} title="Transfer" />
@@ -29,15 +34,17 @@ const FindReceiver = ({ navigation }) => {
             },
           ]}
           placeholder="Search receiver here"
+          onChangeText={(text) => setSearch(text)}
         />
       </View>
       <View style={[globalCss.container, { marginTop: 10 }]}>
         <Text style={[{ fontSize: 18 }]}>All Contacts</Text>
-        <Text style={[{ fontSize: 14, fontWeight: 300 }]}>
-          10 contact found
-        </Text>
       </View>
-      <ContactList />
+      <ContactList
+        search={search}
+        id={route.params.id}
+        balance={route.params.balance}
+      />
     </ScrollView>
   );
 };

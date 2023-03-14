@@ -71,7 +71,16 @@ const Home = ({ navigation }) => {
           },
         ]}
       >
-        <View
+        <Pressable
+          android_ripple={{
+            color: "#d3def9",
+            radius: 30,
+            borderless: true,
+            foreground: true,
+          }}
+          onPress={() =>
+            navigation.navigate("profile", { id: route.params.id })
+          }
           style={[
             { flexDirection: "row", columnGap: 15, alignItems: "center" },
           ]}
@@ -110,7 +119,7 @@ const Home = ({ navigation }) => {
               {data ? data.username : ""}
             </Text>
           </View>
-        </View>
+        </Pressable>
         <Ionicons name="notifications-outline" size={30} color="black" />
       </View>
       <Balance
@@ -127,7 +136,12 @@ const Home = ({ navigation }) => {
       >
         <Pressable
           style={[{ width: "45%" }]}
-          onPress={() => navigation.navigate("find-receiver")}
+          onPress={() =>
+            navigation.navigate("find-receiver", {
+              id: data.id,
+              balance: data.balance,
+            })
+          }
         >
           <Text style={[globalCss.btnSecondary, { fontSize: 18 }]}>
             <AntDesign name="arrowup" size={20} color="#537FE7" /> Transfer
@@ -159,7 +173,7 @@ const Home = ({ navigation }) => {
         <Text style={[{ fontSize: 18 }]}>Transaction </Text>
         <Text style={[{ color: "#537FE7", fontSize: 18 }]}>See details</Text>
       </View>
-      <TransactionHistory />
+      <TransactionHistory id={route.params ? route.params.id : ""} />
     </ScrollView>
   );
 };

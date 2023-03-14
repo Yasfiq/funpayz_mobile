@@ -12,6 +12,7 @@ import ConfirmOTP from "./src/components/page/Confirm OTP";
 import ConfirmPin from "./src/components/page/Confirm Pin";
 import Topup from "./src/components/page/Topup";
 import AmountTopup from "./src/components/page/Amount Topup";
+import Profile from "./src/components/page/Profile";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -22,6 +23,11 @@ export default function App() {
         <Stack.Screen
           name="home"
           component={Home}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="profile"
+          component={Profile}
           options={{ headerShown: false }}
         />
         <Stack.Screen

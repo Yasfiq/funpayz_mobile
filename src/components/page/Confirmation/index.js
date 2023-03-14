@@ -1,5 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Image,
@@ -15,8 +16,78 @@ import Header from "../../molecules/Header";
 
 export default Confirmation = () => {
   const navigation = useNavigation();
+  const [user, setUser] = useState();
   const route = useRoute();
   const [modal, setModal] = useState(false);
+  const time = new Date();
+  const balance_left =
+    route.params.balance - route.params.data.amount.replace(/["Rp.",\s]/g, "");
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const date = `${
+    months[time.getMonth()]
+  } ${time.getDate()}, ${time.getFullYear()} - ${time.getHours()}.${time.getMinutes()}`;
+  const [pin, setPin] = useState("");
+
+  useEffect(() => {
+    axios
+      .get(`https://funpayz.herokuapp.com/api/v1/user/${route.params.user_id}`)
+      .then((res) => {
+        setUser(res.data.Data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  const handleConfirmPin = () => {
+    axios
+      .post(
+        `https://funpayz.herokuapp.com/api/v1/user/confirm-pin/${route.params.user_id}`,
+        {
+          pin: pin.split(""),
+        }
+      )
+      .then((res) => {
+        axios
+          .post(
+            `https://funpayz.herokuapp.com/api/v1/transaction/${route.params.dataUser.id}`,
+            {
+              user_id: route.params.user_id,
+              username: user.id,
+              user_phone: user.phone_number,
+              nominal: route.params.data.amount.replace(/["Rp.",\s]/g, ""),
+              notes: route.params.data.note,
+              time: date,
+              phone_number: route.params.data.phone_number,
+              subject_name: route.params.data.username,
+            }
+          )
+          .then((result) => {
+            setModal(false);
+            alert("Success");
+            navigation.navigate("home", { id: route.params.user_id });
+          })
+          .catch((error) => console.log(error.response.data.Error));
+      })
+      .catch((err) => console.log(err.response.data.Error));
+  };
+
+  useEffect(() => {
+    if (pin.length == 6) {
+      handleConfirmPin();
+    }
+  }, [pin]);
 
   const showConfirmPin = () => {
     return (
@@ -59,6 +130,7 @@ export default Confirmation = () => {
                 },
               ]}
               keyboardType="number-pad"
+              onChangeText={(text) => setPin(text)}
             />
             {/* <Text style={[{ marginVertical: 5, color: "#ff4a42" }]}>
               PIN is wrong!
@@ -130,7 +202,9 @@ export default Confirmation = () => {
               }}
             >
               <Image
-                source={require("../../../assets/images/contoh.jpeg")}
+                source={{
+                  uri: `https://res.cloudinary.com/dcf12mtca/image/upload/v1677939306/${route.params.dataUser.image}.webp`,
+                }}
                 style={[
                   {
                     width: "100%",
@@ -144,9 +218,11 @@ export default Confirmation = () => {
               <Text
                 style={[{ fontSize: 18, fontWeight: "bold", color: "#000" }]}
               >
-                Yasfiq
+                {route.params.dataUser.username}
               </Text>
-              <Text style={[{ color: "#000" }]}>+62 858 9118 5933</Text>
+              <Text style={[{ color: "#000" }]}>
+                {route.params.dataUser.phone_number}
+              </Text>
             </View>
           </View>
         </View>
@@ -160,14 +236,16 @@ export default Confirmation = () => {
             },
           ]}
         >
-          <Text>Amount</Text>
-          <Text>{route.params.data.amount}</Text>
-          <Text>Balance Left</Text>
-          <Text>{toCurrency(20000, "rupiah")}</Text>
-          <Text>Date & Time</Text>
-          <Text>May, 11 2023 09.00</Text>
-          <Text>Notes</Text>
-          <Text>{route.params.data.note}</Text>
+          <Text style={[{ fontWeight: "bold" }]}>Amount</Text>
+          <Text style={[{ marginBottom: 5 }]}>{route.params.data.amount}</Text>
+          <Text style={[{ fontWeight: "bold" }]}>Balance Left</Text>
+          <Text style={[{ marginBottom: 5 }]}>
+            {toCurrency(balance_left, "rupiah")}
+          </Text>
+          <Text style={[{ fontWeight: "bold" }]}>Date & Time</Text>
+          <Text style={[{ marginBottom: 5 }]}>{date}</Text>
+          <Text style={[{ fontWeight: "bold" }]}>Notes</Text>
+          <Text style={[{ marginBottom: 5 }]}>{route.params.data.note}</Text>
         </View>
         <Pressable
           android_ripple={{
