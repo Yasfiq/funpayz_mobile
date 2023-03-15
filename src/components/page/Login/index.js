@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Image, Modal, Pressable, Text, View } from "react-native";
 import globalCss from "../../../assets/styles/globalCss";
 import Brand from "../../atoms/Brand";
 import InputLine from "../../atoms/InputLine";
@@ -8,6 +8,7 @@ import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { Loading } from "../../atoms/Loading";
 
 const Login = ({ navigation }) => {
   const [loading, setLoading] = useState();
@@ -18,6 +19,7 @@ const Login = ({ navigation }) => {
   const [show, setShow] = useState();
   const [error, setError] = useState();
   const [datal, setDatal] = useState();
+  const [load, setLoad] = useState(false);
 
   setTimeout(() => {
     setLoading(true);
@@ -51,13 +53,14 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = () => {
+    setLoad(true);
     axios
-      .post(`http://192.168.1.6:5000/api/v1/auth/login`, data)
+      .post(`https://funpayz.herokuapp.com/api/v1/auth/login`, data)
       .then(async (res) => {
         await storeData(res.data.Data);
         if (res.data.Data.active == "no") {
           axios
-            .post(`http://192.168.1.6:5000/api/v1/auth/sendotp`, {
+            .post(`https://funpayz.herokuapp.com/api/v1/auth/sendotp`, {
               phone_number: res.data.Data.phone_number,
             })
             .then((result) => {
@@ -74,8 +77,12 @@ const Login = ({ navigation }) => {
       .catch((err) => setError(err.response.data.Error));
   };
 
-  if (!loading) {
-    return <SplashScreen />;
+  if (!loading || load) {
+    if (load) {
+      return <Loading />;
+    } else {
+      return <SplashScreen />;
+    }
   } else {
     return (
       <>

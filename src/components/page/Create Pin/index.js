@@ -76,20 +76,20 @@ const FormPin = ({ navigation }) => {
 
   const handleCreatePin = () => {
     axios
-      .patch(`http://192.168.1.6:5000/api/v1/user/${id}`, {
+      .patch(`https://funpayz.herokuapp.com/api/v1/user/${id}`, {
         pin_number: pin,
       })
       .then(async (res) => {
-        setModal(true);
+        // setModal(true);
         await storeData({ ...data, active_pin: true });
-        navigation.navigate("home", { load: true });
+        navigation.navigate("home", { load: true, id: id });
       })
       .catch((err) => console.log(err.response.data));
   };
 
-  const showModal = () => {
-    return <Modal visible={modal}></Modal>;
-  };
+  // const showModal = () => {
+  //   return <Modal visible={modal}></Modal>;
+  // };
 
   return (
     <View
@@ -186,7 +186,7 @@ const FormPin = ({ navigation }) => {
           </Pressable>
         </View>
       </View>
-      {showModal()}
+      {/* {showModal()} */}
     </View>
   );
 };

@@ -237,7 +237,12 @@ export default Confirmation = () => {
           ]}
         >
           <Text style={[{ fontWeight: "bold" }]}>Amount</Text>
-          <Text style={[{ marginBottom: 5 }]}>{route.params.data.amount}</Text>
+          <Text style={[{ marginBottom: 5 }]}>
+            {toCurrency(
+              route.params.data.amount.replace(/["Rp.",\s]/g, ""),
+              "rupiah"
+            )}
+          </Text>
           <Text style={[{ fontWeight: "bold" }]}>Balance Left</Text>
           <Text style={[{ marginBottom: 5 }]}>
             {toCurrency(balance_left, "rupiah")}

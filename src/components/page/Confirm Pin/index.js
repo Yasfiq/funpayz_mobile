@@ -50,7 +50,7 @@ export default ConfirmPin = () => {
 
   useEffect(() => {
     axios
-      .post(`http://192.168.1.6:5000/api/v1/user/confirm-pin/${id}`, {
+      .post(`https://funpayz.herokuapp.com/api/v1/user/confirm-pin/${id}`, {
         pin: "123",
       })
       .then((res) => console.log(res.data.Data))
@@ -91,7 +91,7 @@ export default ConfirmPin = () => {
 
   const handleConfirmPin = () => {
     axios
-      .post(`http://192.168.1.6:5000/api/v1/user/confirm-pin/${id}`, {
+      .post(`https://funpayz.herokuapp.com/api/v1/user/confirm-pin/${id}`, {
         pin: pin,
       })
       .then(async (res) => {

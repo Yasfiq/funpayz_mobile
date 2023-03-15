@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "funpayz",
+    "name": "Funpayz",
     "slug": "funpayz",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/funpayz.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -31,6 +31,12 @@
       "eas": {
         "projectId": "20168440-015d-4a14-9c03-8d111d376da1"
       }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/20168440-015d-4a14-9c03-8d111d376da1"
     }
   }
 }

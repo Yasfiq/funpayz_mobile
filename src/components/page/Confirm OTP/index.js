@@ -88,7 +88,7 @@ export default ConfirmOtp = () => {
     if (confimOtp == route.params.otp) {
       const data = { email: route.params.email };
       axios
-        .patch(`http://192.168.1.6:5000/api/v1/auth/activated`, data)
+        .patch(`https://funpayz.herokuapp.com/api/v1/auth/activated`, data)
         .then((res) => {
           setModal(true);
         })

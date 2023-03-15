@@ -28,6 +28,7 @@ const InputLine = ({
           value={value}
           keyboardType={type}
           secureTextEntry={secure}
+          defaultValue={defaulValue}
         />
       </View>
     </>
